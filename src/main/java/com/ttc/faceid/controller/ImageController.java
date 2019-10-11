@@ -42,6 +42,7 @@ public class ImageController extends BaseController {
             Path path = Paths.get(imagePath);
             byte[] bytes = file.getBytes();
             Files.write(path, bytes);
+            logger.info("upload image success to [{}]", imagePath);
             baseReponse.setErrorCode(StatusCode.SUCCESS);
             baseReponse.setMessage("Upload image success");
             baseReponse.setData(imagePath);
