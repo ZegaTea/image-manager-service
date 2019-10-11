@@ -11,7 +11,7 @@
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <build.dist>${pom.basedir}/realease</build.dist>
+        <build.dist>${pom.basedir}/target</build.dist>
         <jdk.version>1.8</jdk.version>
     </properties>
 
