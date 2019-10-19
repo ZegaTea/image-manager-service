@@ -36,7 +36,7 @@ public class DateUtils {
     }
 
     public String getDateToday() {
-        String pt = "yyyy/MM/dd";
+        String pt = "yyyy-MM-dd";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pt);
         Calendar calendar = Calendar.getInstance();
         String yesterday = simpleDateFormat.format(calendar.getTime());

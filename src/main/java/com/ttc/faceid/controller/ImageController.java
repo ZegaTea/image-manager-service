@@ -2,6 +2,7 @@ package com.ttc.faceid.controller;
 
 import com.ttc.faceid.base.BaseController;
 import com.ttc.faceid.model.response.BaseReponse;
+import com.ttc.faceid.model.response.ImageResponse;
 import com.ttc.faceid.util.DateUtils;
 import com.ttc.faceid.util.FileUtils;
 import com.ttc.faceid.util.config.Constant;
@@ -21,6 +22,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by tudv on 2019/09/23
@@ -29,24 +32,58 @@ import java.nio.file.Paths;
 @RequestMapping(value = "/image")
 public class ImageController extends BaseController {
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
-    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile[] files) {
         BaseReponse baseReponse = new BaseReponse();
         DateUtils dateUtils = new DateUtils();
         try {
             // Get the file and save it somewhere
             String pathDate = Constant.IMAGE_STORAGE + dateUtils.getDateToday();
             FileUtils.createDirectory(pathDate);
-            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-            String imagePath = pathDate + "/" + fileName;
 
-            Path path = Paths.get(imagePath);
-            byte[] bytes = file.getBytes();
-            Files.write(path, bytes);
-            logger.info("upload image success to [{}]", imagePath);
-            baseReponse.setErrorCode(StatusCode.SUCCESS);
-            baseReponse.setMessage("Upload image success");
-            baseReponse.setData(imagePath);
-            return new ResponseEntity<>(getResponse(baseReponse), HttpStatus.OK);
+            if (files.length == 1) {
+                MultipartFile file = files[0];
+                String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+                String imagePath = pathDate + "/" + fileName;
+
+                Path path = Paths.get(imagePath);
+                byte[] bytes = file.getBytes();
+                Files.write(path, bytes);
+
+                logger.info("upload image success to [{}]", imagePath);
+                ImageResponse imageResponse = ImageResponse.builder()
+                        .imageLink(imagePath)
+                        .imageName(file.getOriginalFilename())
+                        .imageSize((double) file.getSize() / 1024)
+                        .build();
+                baseReponse.setErrorCode(StatusCode.SUCCESS);
+                baseReponse.setMessage("Upload image success");
+                baseReponse.setData(imageResponse);
+                return new ResponseEntity<>(getResponse(baseReponse), HttpStatus.OK);
+
+            } else {
+                List<ImageResponse> listDir = new ArrayList<>();
+                for (MultipartFile file : files) {
+                    String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+                    String imagePath = pathDate + "/" + fileName;
+
+                    Path path = Paths.get(imagePath);
+                    byte[] bytes = file.getBytes();
+                    Files.write(path, bytes);
+
+                    logger.info("upload image success to [{}]", imagePath);
+                    ImageResponse imageResponse = ImageResponse.builder()
+                            .imageLink(imagePath)
+                            .imageName(file.getOriginalFilename())
+                            .imageSize((double) file.getSize() / 1024)
+                            .build();
+                    listDir.add(imageResponse);
+                }
+
+                baseReponse.setErrorCode(StatusCode.SUCCESS);
+                baseReponse.setMessage("Upload image success");
+                baseReponse.setData(listDir);
+                return new ResponseEntity<>(getResponse(baseReponse), HttpStatus.OK);
+            }
         } catch (IOException e) {
             e.printStackTrace();
             baseReponse.setMessage("Error when upload image");
