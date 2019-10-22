@@ -1,5 +1,6 @@
 package com.ttc.faceid.config;
 
+import com.ttc.faceid.util.config.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.*;
@@ -49,6 +50,9 @@ public class WebConfig implements WebMvcConfigurer {
                 .addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");
+
+        registry.addResourceHandler("/" + Constant.IMAGE_ROOT_DIR + "/**")
+                .addResourceLocations("file:" + Constant.IMAGE_ROOT_DIR + "/");
     }
 
 

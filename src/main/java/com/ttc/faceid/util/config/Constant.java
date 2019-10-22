@@ -11,5 +11,6 @@ public class Constant {
     public static String PHOENIX_URL = ConfigurationManager.getInstance().getString("phoenix.url");
 
     public static String IMAGE_STORAGE = ConfigurationManager.getInstance().getString("image.storage");
+    public static String IMAGE_ROOT_DIR = ConfigurationManager.getInstance().getString("image.rootDir");
 
 }
